@@ -12,11 +12,10 @@ using std::unique_ptr;
 using std::make_unique;
 
 
-// Visitor abstract class
 template<typename UserType>
 class RegistrationUser;
 
-
+// Visitor abstract class
 class Visitor
 {
 public:
@@ -56,15 +55,7 @@ public:
 };
 
 
-// Visitable user interface classes for Faculty, Students, and Admin
-class Visitable
-{
-public:
-    virtual ~Visitable() = default;
-    virtual void accept(Visitor visitor, string cnetid, Course course) = 0;
-};
-
-
+// CRTP base class for user interface classes for Faculty, Students, and Admin
 template<typename UserType>
 class RegistrationUser
 {
@@ -106,6 +97,14 @@ public:
     RegAttempt results;
 };
 
+
+// Visitable user interface classes for Faculty, Students, and Admin
+class Visitable
+{
+public:
+    virtual ~Visitable() = default;
+    virtual void accept(Visitor visitor, string cnetid, Course course) = 0;
+};
 
 
 class InstructorRegUser : public RegistrationUser<InstructorRegUser>, public Visitable
