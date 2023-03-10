@@ -12,87 +12,70 @@ using std::unique_ptr;
 using std::make_unique;
 
 
-// Visitor abstract classes
+// Visitor abstract class
+template<typename UserType>
+class RegistrationUser;
+
+
 class Visitor
 {
 public:
     virtual ~Visitor() = default;
-    virtual void visit_student(class StudentRegUser& student, string cnetid,
-            Course course) = 0;
-    virtual void visit_admin(class AdminRegUser& user, string cnetid,
-            Course course) = 0;
-    virtual void visit_instructor(class InstructorRegUser& user, string cnetid,
-            Course course) = 0;
+    virtual void visit_student(RegistrationUser<class StudentRegUser>& student,
+            string cnetid, Course course) = 0;
+    virtual void visit_admin(RegistrationUser<class AdminRegUser>& user,
+            string cnetid, Course course) = 0;
+    virtual void visit_instructor(RegistrationUser<class InstructorRegUser>& user,
+            string cnetid, Course course) = 0;
 };
 
 
+// Visitor class for removing student from course
+class DropCourseVisitor : public Visitor
+{
+public:
+    void visit_admin(RegistrationUser<AdminRegUser>& user, string cnetid,
+            Course course) override;
+    void visit_instructor(RegistrationUser<InstructorRegUser>& student,
+            string cnetid, Course course) override;
+    void visit_student(RegistrationUser<StudentRegUser>& student, string cnetid,
+            Course course) override;
+};
+
+
+// Visitor class for adding student to course
+class AddCourseVisitor : public Visitor
+{
+public:
+    void visit_admin(RegistrationUser<AdminRegUser>& user, string cnetid,
+            Course course) override;
+    void visit_instructor(RegistrationUser<InstructorRegUser>& student,
+            string cnetid, Course course) override;
+    void visit_student(RegistrationUser<StudentRegUser>& student, string cnetid,
+            Course course) override;
+};
+
+
+// Visitable user interface classes for Faculty, Students, and Admin
 class Visitable
 {
 public:
     virtual ~Visitable() = default;
-    virtual void accept(Visitor * visitor, string cnetid, Course course) = 0;
-};
-
-
-// User interface classes for Faculty, Students, and Admin
-class InstructorRegUser : public Visitable
-{
-public:
-    InstructorRegUser() {}
-
-    void accept(Visitor * visitor, string cnetid, Course course)
-    {
-        visitor->visit_admin(*this, cnetid, course);
-    }
-};
-
-
-class StudentRegUser : public Visitable
-{
-public:
-    StudentRegUser() {}
-
-    Transcript view_transcript(string cnet_id)
-    {Transcript t; return t;}
-
-    CourseList view_current_schedule(string cnet_id)
-    {CourseList c; return c;}
-
-    void view_restrictions(string cnet_id)
-    {}
-
-    void accept(Visitor * visitor, string cnetid, Course course)
-    {
-        visitor->visit_student(*this, cnetid, course);
-    }
-};
-
-
-class AdminRegUser : public Visitable
-{
-public:
-    AdminRegUser() {}
-
-    void update_student_record() {}
-
-    void accept(Visitor * visitor, string cnetid, Course course)
-    {
-        visitor->visit_admin(*this, cnetid, course);
-    }
+    virtual void accept(Visitor visitor, string cnetid, Course course) = 0;
 };
 
 
 template<typename UserType>
-class RegistrationUser : public UserType
+class RegistrationUser
 {
 public:
-    RegistrationUser<UserType>(User user_data) : user{make_unique<User>(user_data)} {}
-    virtual ~RegistrationUser<UserType>() = default;
+    RegistrationUser(User user_data) : user{make_unique<User>(user_data)} {}
+    virtual ~RegistrationUser() = default;
 
-    RegistrationUser<UserType>(const RegistrationUser<UserType>& cpy)
+    RegistrationUser(const RegistrationUser<UserType>& cpy)
         : user{make_unique<User>(*cpy.user)} {}
 
-    RegistrationUser<UserType>& operator=(const RegistrationUser<UserType>& cpy)
+    RegistrationUser& operator=(const RegistrationUser<UserType>& cpy)
     {
         user = make_unique<User>(*cpy.user);
         return *this;
@@ -106,60 +89,54 @@ public:
         return new_list;
     }
 
-protected:
+    RegAttempt add_course(Course course)
+    {
+        static_cast<UserType>(this)->accept(AddCourseVisitor(), user->name, course);
+        return results;
+    }
+
+    RegAttempt drop_course(Course course)
+    {
+        static_cast<UserType>(this)->accept(DropCourseVisitor(), user->name, course);
+        return results;
+    }
+
     unique_ptr<User> user;
+
+    RegAttempt results;
 };
 
 
-// Visitor classes for adding student to course, differentiated by person making the request
-class AddCourseVisitor : public Visitor
+
+class InstructorRegUser : public RegistrationUser<InstructorRegUser>, public Visitable
 {
 public:
-    RegResults result;
-
-    void visit_admin(AdminRegUser& user, string cnetid,
-            Course course) override
+    void accept(Visitor visitor, string cnetid, Course course) override
     {
-        // faculty / admin add student to course
+        visitor.visit_instructor(*this, cnetid, course);
     }
-
-    void visit_student(StudentRegUser& student, string cnetid,
-            Course course) override
-    {
-        // Create registration data object
-        RegistrationData reg_request(cnetid, course);
-
-        // Set chain of responsibility handlers
-        unique_ptr<StudentAddProcessChain> add_student_req;
-
-        add_student_req = make_unique<StudentAddProcessChain>(reg_request);
-        add_student_req->set_next_handler(DetermineHolds());
-        add_student_req->set_next_handler(DeterminePrereqs());
-        add_student_req->set_next_handler(DetermineConsent());
-        add_student_req->set_next_handler(AttemptAddCourse());
-
-        // Make request
-        add_student_req->next_handle();
-
-        result = reg_request.result;
-    }
-
 };
 
 
-// Visitor classes for removing student from course, differentiated by person making the request
-class DropCourseVisitor : public Visitor
+class StudentRegUser : public RegistrationUser<StudentRegUser>, public Visitable
 {
 public:
-    void visit_admin(AdminRegUser& user, string cnetid, Course course) override
+    Transcript view_transcript(string cnet_id);
+    CourseList view_current_schedule(string cnet_id);
+    void view_holds(string cnet_id);
+    void accept(Visitor visitor, string cnetid, Course course) override
     {
-        // faculty / admin drop student from course
+        visitor.visit_student(*this, cnetid, course);
     }
+};
 
-    void visit_student(StudentRegUser& student, string cnetid, Course course) override
+
+class AdminRegUser : public RegistrationUser<AdminRegUser>, public Visitable
+{
+public:
+    void update_student_record() {}
+    void accept(Visitor visitor, string cnetid, Course course) override
     {
-        // student drops course
+        visitor.visit_admin(*this, cnetid, course);
     }
-
-    string result {};
 };

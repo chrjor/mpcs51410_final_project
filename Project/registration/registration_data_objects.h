@@ -93,32 +93,35 @@ using Transcript = vector<Grade>;
 
 
 // Course add/drop objects
-enum RegResults { success, course_full, reg_closed, consent, pre_reqs, holds };
+enum RegResult { success, course_full, reg_closed, consent, pre_reqs, holds };
+
+using RegAttempt = vector<RegResult>;
 
 struct RegistrationData
 {
-    RegistrationData(User user, Course course)
-        : user{make_unique<User>(user)},
-        course{make_unique<Course>(course)} {};
+    RegistrationData(User u, Course c, RegAttempt& r)
+        : user{make_unique<User>(u)},
+        course{make_unique<Course>(c)},
+        results{make_unique<RegAttempt>(std::move(r))} {}
 
     ~RegistrationData() = default;
 
     RegistrationData(const RegistrationData& cpy)
-        : user{std::make_unique<User>(*cpy.user)},
-        course{std::make_unique<Course>(*cpy.course)},
-        result{cpy.result} {}
+        : user{make_unique<User>(*cpy.user)},
+        course{make_unique<Course>(*cpy.course)},
+        results{make_unique<RegAttempt>(*cpy.results)} {}
 
     RegistrationData& operator=(const RegistrationData& cpy)
     {
-        user = std::make_unique<User>(*cpy.user);
-        course = std::make_unique<Course>(*cpy.course);
-        result = cpy.result;
+        user = make_unique<User>(*cpy.user);
+        course = make_unique<Course>(*cpy.course);
+        results = make_unique<RegAttempt>(*cpy.results);
         return *this;
     }
 
-    void set_result(RegResults r) { result = r; }
+    void set_result(RegAttempt r) { *results = r; }
 
     unique_ptr<User> user;
     unique_ptr<Course> course;
-    RegResults result;
+    unique_ptr<RegAttempt> results;
 };
