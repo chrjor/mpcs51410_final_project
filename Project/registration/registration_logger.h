@@ -2,6 +2,7 @@
 
 
 #pragma once
+#include <iostream>
 #include <sstream> // Using stringstream to avoid possible compilation issues with C++20 std::format
 #include <string>
 
@@ -14,7 +15,11 @@ using std::string;
 // Registration context log events
 enum RegEvents { course_search,
                  add_course,
-                 drop_course};
+                 drop_course,
+                 view_trans,
+                 view_sched,
+                 view_holds,
+                 update_holds};
 
 
 // Registration context log event observer
@@ -42,6 +47,18 @@ public:
                 break;
             case RegEvents::drop_course:
                 ost << "attempted to drop course\n";
+                break;
+            case RegEvents::view_trans:
+                ost << "viewed transcript\n";
+                break;
+            case RegEvents::view_sched:
+                ost << "viewed schedule\n";
+                break;
+            case RegEvents::view_holds:
+                ost << "viewed_holds\n";
+                break;
+            case RegEvents::update_holds:
+                ost << "updated student's hold status\n";
                 break;
         }
         logger.write_reg_event(ost.str());

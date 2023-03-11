@@ -3,12 +3,19 @@
 #pragma once
 #include <string>
 
+
+using std::string;
+
+
+enum Roles { Instructor, TA, Student, Admin };
+
+
 struct User
 {
-    std::string cnet_id;
-    std::string name;
-    std::string password;
-    std::string role;
+    string cnet_id;
+    string name;
+    string password;
+    Roles role;
 };
 
 
@@ -18,5 +25,5 @@ protected:
     bool add_account(const User&);
     bool rem_account(const User&);
 public:
-    User get_user(const std::string cnetid) const;
+    User get_user(const string cnetid) const;
 };

@@ -1,20 +1,21 @@
 // User object construction through component and prototype patterns
 
 #pragma once
-#include <memory>
-#include <vector>
-
+#include "account_data_objects.h"
 #include "../admin_management/admin_process.h"
 #include "../course_manipulation/course_manip_process.h"
 #include "../registration/registration_process.h"
 
+#include <memory>
+#include <vector>
+
+
 
 using std::unique_ptr;
 using std::make_unique;
-using std::vector;
 
 
-// Abstract class for user role prototypes
+// Abstract class for user prototypes
 class UserObject
 {
 public:
@@ -23,7 +24,7 @@ public:
 };
 
 
-// Variadic mixin template for user role prototypes
+// Variadic mixin template that creates user prototypes
 template<typename... Roles>
 class UserRole : public UserObject, public Roles...
 {
@@ -39,14 +40,11 @@ public:
 
 
 // Factory method for user role prototypes
-enum user_role { Instructor, TA, Student, Admin };
-
 class UserPrototypeFactory
 {
 public:
-    unique_ptr<UserObject> get_user_role(user_role role, User u);
+    static unique_ptr<UserObject> get_user_role(Roles role, User u);
 
 private:
     UserPrototypeFactory() {}
-    static vector<unique_ptr<UserObject>> prototypes;
 };

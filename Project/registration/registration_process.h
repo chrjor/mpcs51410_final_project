@@ -6,6 +6,7 @@
 
 #include "registration_add_course.h"
 #include "registration_data_objects.h"
+#include "registration_data_controller.h"
 #include "registration_logger.h"
 
 
@@ -15,6 +16,7 @@ using std::make_unique;
 
 template<typename UserType>
 class RegistrationUser;
+
 
 // Visitor abstract class
 class Visitor
@@ -71,7 +73,9 @@ class RegistrationUser : public Observable<User>
 {
 public:
     RegistrationUser(User user_data)
-        : user{make_unique<User>(user_data)} {}
+        : user{make_unique<User>(user_data)},
+          db_con{make_unique<RegDataController>(mysql_uname, mysql_upass)}
+    {}
 
     virtual ~RegistrationUser() = default;
 
@@ -89,27 +93,30 @@ public:
     CourseList course_search(Course search_params)
     {
         CourseList new_list;
-        Observable::log_event(user, RegEvents::course_search);
+        Observable::log_event(*user, RegEvents::course_search);
         return new_list;
     }
 
     RegAttempt add_course(Course course)
     {
         static_cast<UserType>(this)->accept(AddCourseVisitor(), user->name, course);
-        Observable::log_event(user, RegEvents::add_course);
+        Observable::log_event(*user, RegEvents::add_course);
         return results;
     }
 
     RegAttempt drop_course(Course course)
     {
         static_cast<UserType>(this)->accept(DropCourseVisitor(), user->name, course);
-        Observable::log_event(user, RegEvents::drop_course);
+        Observable::log_event(*user, RegEvents::drop_course);
         return results;
     }
 
     // Public data members for all registration users
     unique_ptr<User> user;
     RegAttempt results;
+
+protected:
+    unique_ptr<RegDataController> db_con;
 };
 
 

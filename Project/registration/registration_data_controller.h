@@ -31,6 +31,7 @@ public:
         delete con;
         delete stmt;
         delete trnscpt_stmt;
+        delete holds_stmt;
     }
 
     Transcript get_course_hist(string cnet_id);

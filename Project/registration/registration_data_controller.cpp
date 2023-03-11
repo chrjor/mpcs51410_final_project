@@ -3,9 +3,8 @@
 
 #include "registration_data_controller.h"
 #include "registration_data_objects.h"
-#include "registration_sql_tables.h" // Keep in .cpp
-#include <cppconn/prepared_statement.h>
-#include <memory>
+
+#include "registration_sql_tables.h" // Keep in this .cpp
 
 
 // RegDataController static initializations
@@ -50,7 +49,7 @@ Transcript RegDataController::get_course_hist(string cnet_id)
         s.quarter = res->getString("quarter");
         Course c(res->getString("courseid"), 0, "", {}, false, s);
         Grade g(c, res->getString("grade"));
-        t.push_back(g);
+        t.emplace_back(make_unique<Grade>(g));
     }
 
     return t;

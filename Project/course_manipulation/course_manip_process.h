@@ -24,7 +24,8 @@ public:
     ~EnrolledStudent() = default;
 
     EnrolledStudent(EnrolledStudent const& cpy)
-        : name{cpy.name}, cnetid{cpy.cnetid}, grade{cpy.grade}, course{cpy.course} {}
+        : name{cpy.name}, cnetid{cpy.cnetid}, grade{cpy.grade}, course{cpy.course}
+    {}
 
     EnrolledStudent& operator=(const EnrolledStudent& cpy)
     {
@@ -98,7 +99,7 @@ public:
         num_students = roster.size();
     }
 
-    void send_email() { for (auto& student : roster) student->send_email(); }
+  void send_email() { for (auto& student : roster) student->send_email(); }
 
 protected:
     CourseStudents roster {};

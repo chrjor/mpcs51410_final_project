@@ -62,7 +62,7 @@ struct Course
     unique_ptr<Schedule> schedule;
 };
 
-using CourseList = vector<Course>;
+using CourseList = vector<unique_ptr<Course>>;
 
 
 // Transcript struct used by students
@@ -86,7 +86,7 @@ struct Grade
     unique_ptr<Course> course;
     string grade;
 };
-using Transcript = vector<Grade>;
+using Transcript = vector<unique_ptr<Grade>>;
 
 
 // Course add/drop objects
