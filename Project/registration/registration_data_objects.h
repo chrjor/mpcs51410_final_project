@@ -22,15 +22,15 @@ struct Schedule
     int start_time;
     int end_time;
     int year;
-    int quarter;
+    string quarter;
     vector<string> days;
 };
 
 struct Course
 {
-    Course(string name, int c_id, int i_id, string sum, vector<string> prereqs,
+    Course(string c_id, int i_id, string sum, vector<string> prereqs,
             bool consent, Schedule sched)
-        : name{name}, course_id{c_id}, instructor_id{i_id},
+        : course_id{c_id}, instructor_id{i_id},
         summary{sum}, prereqs{prereqs}, consent{consent},
         schedule{make_unique<Schedule>(std::move(sched))}
     {};
@@ -38,14 +38,12 @@ struct Course
     ~Course() = default;
 
     Course(const Course& cpy)
-        : name{cpy.name}, course_id{cpy.course_id},
-        instructor_id{cpy.instructor_id}, summary{cpy.summary},
-        prereqs{cpy.prereqs}, consent{cpy.consent},
+        : course_id{cpy.course_id}, instructor_id{cpy.instructor_id},
+        summary{cpy.summary}, prereqs{cpy.prereqs}, consent{cpy.consent},
         schedule{std::make_unique<Schedule>(*cpy.schedule)} {}
 
     Course& operator=(const Course& cpy)
     {
-        name = cpy.name;
         course_id = cpy.course_id;
         instructor_id = cpy.instructor_id;
         summary = cpy.summary;
@@ -55,8 +53,7 @@ struct Course
         return *this;
     }
 
-    string name;
-    int course_id;
+    string course_id;
     int instructor_id;
     string summary;
     vector<string> prereqs;
@@ -125,3 +122,9 @@ struct RegistrationData
     unique_ptr<Course> course;
     unique_ptr<RegAttempt> results;
 };
+
+
+// Student holds data object
+enum HoldTypes { CorseEvals, OutstandingTuition, OutstandingHealthReq, GPA };
+
+using StudentHolds = vector<HoldTypes>;

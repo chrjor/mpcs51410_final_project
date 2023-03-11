@@ -2,6 +2,7 @@
 
 
 #include "account_user_objects.h"
+#include <memory>
 
 
 unique_ptr<UserObject> UserPrototypeFactory::get_user_role(user_role role, User u)
@@ -29,5 +30,6 @@ unique_ptr<UserObject> UserPrototypeFactory::get_user_role(user_role role, User 
     }
     return prototypes[role]->clone(u);
 }
+
 
 vector<unique_ptr<UserObject>> UserPrototypeFactory::prototypes(4);

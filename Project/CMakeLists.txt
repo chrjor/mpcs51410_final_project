@@ -1,4 +1,5 @@
 add_subdirectory(admin_management)
+add_subdirectory(data_management)
 add_subdirectory(course_catalog)
 add_subdirectory(course_manipulation)
 add_subdirectory(identity_access)

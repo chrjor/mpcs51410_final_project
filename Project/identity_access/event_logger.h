@@ -16,17 +16,13 @@ using std::string;
 using std::unique_ptr;
 
 
-// Log levels
-enum log_context { course_manip, reg, admin };
-
-
 // Observer template for log event
 template<typename T>
 class Observer
 {
 public:
     virtual ~Observer() = default;
-    virtual void log_event(T& source, string message, log_context level) = 0;
+    virtual void log_event(T& source, int message) = 0;
 };
 
 
@@ -35,11 +31,11 @@ template<typename T>
 class Observable
 {
 public:
-    void log_event(T& observed, string message, log_context level)
+    void log_event(T& observed, int message)
     {
         std::lock_guard<std::mutex> loc(mtx);
         for (auto observer : observers) {
-            observer->log_event(observed, message, level);
+            observer->log_event(observed, message);
         }
     }
 
@@ -67,19 +63,19 @@ public:
     }
 
     // Write method
-    void write_info(string message)
+    void write_reg_event(string message)
     {
-        if (log_file) log_file << "INFO: " << message << std::endl;
+        if (log_file) log_file << message;
     }
 
-    void write_warn(string message)
+    void write_course_event(string message)
     {
-        if (log_file) log_file << "WARNING: " << message << std::endl;
+        if (log_file) log_file << message;
     }
 
-    void write_err(string message)
+    void write_admin_event(string message)
     {
-        if (log_file) log_file << "ERROR :" << message << std::endl;
+        if (log_file) log_file << message;
     }
 
     // Create new log
@@ -98,7 +94,6 @@ private:
 };
 
 
-
 // Course manipulation context log event observer
 class CourseManipLogObserver : public Observer<User>
 {
@@ -108,30 +103,10 @@ private:
 public:
     CourseManipLogObserver() : logger{EventLogger::instance()} {};
 
-    void log_event(User& user, string message_type, log_context level)
+    void log_event(User& user, int message_type)
     {
-        if (level != log_context::course_manip) return;
-        if (message_type == "test") {
-            logger.write_warn(message_type);
-        }
-    }
-};
-
-
-// Registration context log event observer
-class RegLogObserver : public Observer<User>
-{
-private:
-    EventLogger& logger;
-
-public:
-    RegLogObserver() : logger{EventLogger::instance()} {};
-
-    void log_event(User& user, string message_type, log_context level)
-    {
-        if (level != log_context::reg) return;
-        if (message_type == "test") {
-            logger.write_err(message_type);
+        if (message_type == -1) {
+            logger.write_course_event("test");
         }
     }
 };
@@ -146,14 +121,10 @@ private:
 public:
     AdminLogObserver() : logger{EventLogger::instance()} {};
 
-    void log_event(User& user, string message_type, log_context level)
+    void log_event(User& user, int message_type)
     {
-        if (level != log_context::admin) return;
-        if (message_type == "test") {
-            logger.write_info(message_type);
+        if (message_type == -1) {
+            logger.write_admin_event("test");
         }
     }
 };
-
-
-
