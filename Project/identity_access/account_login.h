@@ -11,9 +11,11 @@
 using std::unique_ptr;
 
 
+// Forward declaration of UserObject
 class UserObject;
 
 
+// Object decorator class for account database login_user() method
 class AccountAccess
 {
 public:
@@ -24,10 +26,13 @@ private:
 };
 
 
-// Admin account actions
+// Admin account decorator class
 class AdminAccAccess
 {
 public:
     bool add_account(const User& new_user);
     bool rem_account(const User& user);
+
+private:
+    unique_ptr<AccDataController> db_con;
 };

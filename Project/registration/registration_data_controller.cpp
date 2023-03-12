@@ -2,20 +2,21 @@
 
 
 #include "registration_data_controller.h"
-#include "registration_data_objects.h"
 
-#include "registration_sql_tables.h" // Keep in this .cpp
+// Keep these in this .cpp (glabal variables)
+#include "registration_sql_tables.h"
 
 
 // RegDataController static initializations
 sql::PreparedStatement *RegDataController::trnscpt_stmt = nullptr;
+sql::PreparedStatement *RegDataController::holds_stmt = nullptr;
 
 
 // RegDataController public methods
 RegDataController::RegDataController(string user, string password)
-    : MySQLBase(user, password)
+    : MySQLBase()
 {
-    con = MySQLBase::driver->connect("tcp://127.0.0.1:3306", user, password);
+    con = MySQLBase::driver->connect("tcp://127.0.0.1:3306", mysql_uname, mysql_upass);
 
     // Prepare Registration table if not created already
     stmt = con->createStatement();
@@ -89,6 +90,3 @@ void RegDataController::update_hold(string cnet_id, HoldTypes hold)
     new_hold->setString(1, cnet_id);
     new_hold->setInt(1, hold);
 }
-
-
-

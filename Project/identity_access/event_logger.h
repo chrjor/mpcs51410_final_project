@@ -92,39 +92,3 @@ private:
 
     std::ofstream log_file;
 };
-
-
-// Course manipulation context log event observer
-class CourseManipLogObserver : public Observer<User>
-{
-private:
-    EventLogger& logger;
-
-public:
-    CourseManipLogObserver() : logger{EventLogger::instance()} {};
-
-    void log_event(User& user, int message_type)
-    {
-        if (message_type == -1) {
-            logger.write_course_event("test");
-        }
-    }
-};
-
-
-// Admin context log event observer
-class AdminLogObserver : public Observer<User>
-{
-private:
-    EventLogger& logger;
-
-public:
-    AdminLogObserver() : logger{EventLogger::instance()} {};
-
-    void log_event(User& user, int message_type)
-    {
-        if (message_type == -1) {
-            logger.write_admin_event("test");
-        }
-    }
-};
