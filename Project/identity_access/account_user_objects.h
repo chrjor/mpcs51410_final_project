@@ -20,7 +20,7 @@ class UserObject
 {
 public:
     virtual ~UserObject() = default;
-    virtual unique_ptr<UserObject> clone(const User u) = 0;
+    virtual unique_ptr<UserObject> clone(const User u);
 };
 
 

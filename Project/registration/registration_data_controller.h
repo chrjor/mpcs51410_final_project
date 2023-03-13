@@ -25,7 +25,7 @@ using std::string;
 class RegDataController : MySQLBase
 {
 public:
-    RegDataController(string user, string password);
+    RegDataController();
     ~RegDataController() noexcept
     {
         delete con;

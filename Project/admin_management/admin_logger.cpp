@@ -13,7 +13,7 @@ using std::string;
 
 // Admin context log event observer method
 
-void AdminLogObserver::log_event(User &user, int message_type)
+void AdminLogObserver::log_event(User user, int message_type)
 {
     std::ostringstream ost;
     ost << "Admin Event | User: " << user.name << " | ";

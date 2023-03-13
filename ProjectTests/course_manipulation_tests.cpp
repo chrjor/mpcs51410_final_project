@@ -1,6 +1,8 @@
-#include <catch2/catch_test_macros.hpp>
+// Unit tests for `course_manip_data_objects.h`
 
-#include "../Project/course_manipulation/course.h"
+
+#include <catch2/catch_test_macros.hpp>
+#include "../Project/course_manipulation/course_manip_data_objects.h"
 
 
 TEST_CASE("EnrolledStudent copy by assignment and comparison works",
@@ -16,7 +18,7 @@ TEST_CASE("EnrolledStudent copy by assignment and comparison works",
 SCENARIO("Roster is an iterator", "[Roster]")
 {
     GIVEN("An empty Roster object") {
-        Roster<EnrolledStudent> roster;
+        RosterAdapter<EnrolledStudent> roster;
 
         THEN("The size is zero") {
             REQUIRE(roster.size() == 0);

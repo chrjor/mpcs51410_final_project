@@ -1,1 +1,11 @@
-add_library(IdentityAccess account_login.h account_login.cpp event_logger.cpp)
+add_library(IdentityAccess
+    account_data_controller.h
+    account_data_controller.cpp
+    account_data_objects.h
+    account_login.h
+    account_login.cpp
+    account_sql_tables.h
+    account_user_objects.h
+    account_user_objects.cpp
+    event_logger.h
+)

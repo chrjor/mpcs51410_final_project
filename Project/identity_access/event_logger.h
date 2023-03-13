@@ -22,7 +22,7 @@ class Observer
 {
 public:
     virtual ~Observer() = default;
-    virtual void log_event(T& source, int message) = 0;
+    virtual void log_event(T source, int message);
 };
 
 
@@ -31,10 +31,10 @@ template<typename T>
 class Observable
 {
 public:
-    void log_event(T& observed, int message)
+    void log_event(T observed, int message)
     {
         std::lock_guard<std::mutex> loc(mtx);
-        for (auto observer : observers) {
+        for (auto& observer : observers) {
             observer->log_event(observed, message);
         }
     }
@@ -42,7 +42,7 @@ public:
     void add_observer(unique_ptr<Observer<T>> observer)
     {
         std::lock_guard<std::mutex> loc(mtx);
-        observers.push_back(make_unique<Observer<T>>(*observer));
+        observers.emplace_back(make_unique<Observer<T>>(*observer));
     }
 
 private:

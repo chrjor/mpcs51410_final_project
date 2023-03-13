@@ -7,7 +7,7 @@
 
 unique_ptr<UserObject> UserPrototypeFactory::get_user_role(Roles role, User u)
 {
-    static vector<unique_ptr<UserObject>> prototypes;
+    static vector<unique_ptr<UserObject>> prototypes(4);
 
     if (!prototypes[role]) {
         User empty_usr;
@@ -32,6 +32,3 @@ unique_ptr<UserObject> UserPrototypeFactory::get_user_role(Roles role, User u)
     }
     return prototypes[role]->clone(u);
 }
-
-
-vector<unique_ptr<UserObject>> UserPrototypeFactory::prototypes(4);

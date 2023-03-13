@@ -4,31 +4,6 @@
 #include "registration_data_objects.h"
 
 
-// Course class functionality
-Course::Course(string c_id, int i_id, string sum, vector<string> prereqs,
-        bool consent, Schedule sched)
-    : course_id{c_id}, instructor_id{i_id}, summary{sum}, prereqs{prereqs},
-    consent{consent}, schedule{make_unique<Schedule>(std::move(sched))} {}
-
-
-Course::Course(const Course& cpy)
-    : course_id{cpy.course_id}, instructor_id{cpy.instructor_id},
-    summary{cpy.summary}, prereqs{cpy.prereqs}, consent{cpy.consent},
-    schedule{std::make_unique<Schedule>(*cpy.schedule)} {}
-
-
-Course& Course::operator=(const Course& cpy)
-{
-    course_id = cpy.course_id;
-    instructor_id = cpy.instructor_id;
-    summary = cpy.summary;
-    prereqs = cpy.prereqs;
-    consent = cpy.consent;
-    schedule = std::make_unique<Schedule>(*cpy.schedule);
-    return *this;
-}
-
-
 // RegistrationData class functionality
 RegistrationData::RegistrationData(User u, Course c, RegAttempt& r)
     : user{make_unique<User>(u)}, course{make_unique<Course>(c)},

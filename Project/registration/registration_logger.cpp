@@ -11,7 +11,7 @@ using std::string;
 
 
 // Registration context log event observer method
-void RegLogObserver::log_event(User &user, int message_type)
+void RegLogObserver::log_event(User user, int message_type)
 {
         std::ostringstream ost;
         ost << "Registration Event | User: " << user.name << " | ";

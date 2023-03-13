@@ -27,8 +27,11 @@ class RosterAdapter
 public:
     using CourseStudents = vector<Student>;
 
+    RosterAdapter() {};
+
     RosterAdapter(CourseStudents roster)
         : roster{roster}, num_students{roster.size()} {};
+
     ~RosterAdapter() = default;
 
     RosterAdapter(const RosterAdapter& cpy)

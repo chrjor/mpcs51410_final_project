@@ -3,8 +3,9 @@
 
 #include "registration_data_controller.h"
 
-// Keep these in this .cpp (glabal variables)
+// Keep these in this .cpp (avoid global variables)
 #include "registration_sql_tables.h"
+#include "../mysql_login.h"
 
 
 // RegDataController static initializations
@@ -13,8 +14,7 @@ sql::PreparedStatement *RegDataController::holds_stmt = nullptr;
 
 
 // RegDataController public methods
-RegDataController::RegDataController(string user, string password)
-    : MySQLBase()
+RegDataController::RegDataController() : MySQLBase()
 {
     con = MySQLBase::driver->connect("tcp://127.0.0.1:3306", mysql_uname, mysql_upass);
 

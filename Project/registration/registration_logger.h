@@ -22,5 +22,5 @@ private:
 
 public:
     RegLogObserver() : logger{EventLogger::instance()} {};
-    void log_event(User& user, int message_type);
+    void log_event(User user, int message_type);
 };

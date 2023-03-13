@@ -11,7 +11,7 @@ using std::string;
 
 
 // Log event observer method
-void CourseManipLogObserver::log_event(User &user, int message_type)
+void CourseManipLogObserver::log_event(User user, int message_type)
 {
         std::ostringstream ost;
         ost << "Couse Manipulation Event | User: " << user.name << " | ";

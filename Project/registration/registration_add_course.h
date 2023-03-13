@@ -1,4 +1,4 @@
-// Add course process interface
+// Add course process interface for a student attempt to add a course
 
 
 #pragma once
@@ -15,9 +15,7 @@ using std::unique_ptr;
 using std::make_unique;
 
 
-// Chain of responsibility pattern for handling student add course process when
-// initialized by student
-
+// Chain of responsibility base class
 class StudentAddProcessChain
 {
 private:
@@ -34,35 +32,20 @@ public:
 
     virtual ~StudentAddProcessChain() {}
 
-    StudentAddProcessChain(const StudentAddProcessChain& cpy)
-        : reg_attempt{make_unique<RegistrationData>(*cpy.reg_attempt)},
-        next{ (cpy.next) ? make_unique<StudentAddProcessChain>(*cpy.next) : nullptr } {}
+    StudentAddProcessChain(const StudentAddProcessChain& cpy);
 
-    StudentAddProcessChain& operator=(const StudentAddProcessChain& cpy)
-    {
-        reg_attempt = make_unique<RegistrationData>(*cpy.reg_attempt);
-        next = (cpy.next) ? make_unique<StudentAddProcessChain>(*cpy.next) : nullptr;
-        return *this;
-    }
+    StudentAddProcessChain& operator=(const StudentAddProcessChain& cpy);
 
-    StudentAddProcessChain(StudentAddProcessChain&& mv)
-        : next{std::move(mv.next)},
-        reg_attempt{std::move(mv.reg_attempt)} {}
+    StudentAddProcessChain(StudentAddProcessChain&& mv);
 
     template<typename Handler>
-    void set_next_handler(Handler next_handler)
-    {
-        if (next) {
-            next->set_next_handler(next_handler);
-        } else {
-            next = make_unique<Handler>(next_handler);
-        }
-    }
+    void set_next_handler(Handler next_handler);
 
     virtual void next_handle() { if (next) next->next_handle(); }
 };
 
 
+// Chain of responsibility handlers
 class DetermineHolds : public StudentAddProcessChain
 {
 public:

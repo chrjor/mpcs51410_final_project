@@ -1,1 +1,15 @@
-add_library(Registration INTERFACE registration.h)
+add_library(Registration
+    registration_add_course.h
+    registration_add_course.cpp
+    registration_data_controller.h
+    registration_data_controller.cpp
+    registration_data_objects.h
+    registration_data_objects.cpp
+    registration_logger.h
+    registration_logger.cpp
+    registration_process.h
+    registration_process.cpp
+    registration_sql_tables.h
+    registration_user_visitors.h
+    registration_user_visitors.cpp
+)

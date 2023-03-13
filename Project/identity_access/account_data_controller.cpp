@@ -3,8 +3,9 @@
 
 #include "account_data_controller.h"
 
-// Keep these in this .cpp (table creation string is glabal variable)
+// Keep these in this .cpp (avoid global variables)
 #include "account_sql_tables.h"
+#include "../mysql_login.h"
 
 #include <string>
 
